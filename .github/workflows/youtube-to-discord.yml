@@ -1,0 +1,72 @@
+name: YouTube → Discord
+
+on:
+  schedule:
+    # 15分おきに実行。GitHub の定時実行は混雑時に数分〜十数分遅れることがある。
+    # プライベートリポジトリで無料枠(2000分/月)に収めたい場合は '*/30 * * * *' にする。
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Discord に送らず、送る内容を表示するだけにする"
+        type: boolean
+        default: false
+
+# state.json を書き戻すため書き込み権限が要る
+permissions:
+  contents: write
+
+# 実行が重なると state.json の push が衝突するので、同時実行を禁止する
+concurrency:
+  group: youtube-to-discord
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 新着をチェックして Discord に投稿
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          YOUTUBE_CHANNEL_ID: UCoHy7BYunccawKcweDPdgtg
+          # Shorts を流したくなくなったら "false" にする
+          POST_SHORTS: "true"
+          # 配信中のライブも流したくなったら "true" にする
+          POST_LIVE: "false"
+          # 週1本の通常動画が毎日のショートに埋もれないよう、文面を分けている。
+          # 区切り線は本文の長さに合わせているので、文言を変えるときは長さも調整する。
+          MESSAGE_TEMPLATE: |-
+            ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+            🎥 新しい動画が公開されました！‼️
+            ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+            {url}
+          SHORTS_MESSAGE_TEMPLATE: |-
+            ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+            ⚡️ 新しいショートが公開されました！‼️
+            ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+            {url}
+          # Shortsだけ別チャンネルに分けたい場合は、そのチャンネルのWebhookを
+          # SHORTS_WEBHOOK_URL という名前でSecretsに登録し、次の行のコメントを外す
+          # SHORTS_WEBHOOK_URL: ${{ secrets.SHORTS_WEBHOOK_URL }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: python3 notify.py
+
+      - name: 通知済みリストを保存
+        run: |
+          if [ -z "$(git status --porcelain state.json)" ]; then
+            echo "state.json に変更なし"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state.json
+          git commit -m "chore: 通知済み動画リストを更新 [skip ci]"
+          # 別の実行が先に push している場合に備えて、最新を取り込んでから push する
+          for i in 1 2 3; do
+            git pull --rebase --autostash && git push && exit 0
+            echo "push に失敗。リトライ $i/3"
+            sleep 5
+          done
+          exit 1
