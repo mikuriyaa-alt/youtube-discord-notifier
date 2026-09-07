@@ -83,7 +83,7 @@ Discordにはこの形で投稿されます。
 
 ```
 ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-🎥 新しい動画が公開されました！‼️
+🎥 新しい動画が公開されました‼️
 ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 https://www.youtube.com/watch?v=xxxxxxxxxxx
 ```
@@ -92,7 +92,7 @@ https://www.youtube.com/watch?v=xxxxxxxxxxx
 
 ```
 ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-⚡️ 新しいショートが公開されました！‼️
+⚡️ 新しいショートが公開されました‼️
 ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 https://www.youtube.com/watch?v=xxxxxxxxxxx
 ```
@@ -161,7 +161,7 @@ POST_SHORTS: "true"
 ```yaml
 MESSAGE_TEMPLATE: |-
   ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-  🎥 新しい動画が公開されました！‼️
+  🎥 新しい動画が公開されました‼️
   ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
   {url}
 ```

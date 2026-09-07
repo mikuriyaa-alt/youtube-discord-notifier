@@ -232,13 +232,13 @@ def main():
     dry_run = env_bool("DRY_RUN", False)
     template = env_template(
         "MESSAGE_TEMPLATE",
-        "＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝\n🎥 新しい動画が公開されました！‼️\n＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝\n{url}",
+        "＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝\n🎥 新しい動画が公開されました‼️\n＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝\n{url}",
     )
     # Shorts は通常動画より圧倒的に本数が多い。同じ文面で流すと週1本の通常動画が
     # 埋もれるので、既定では見分けのつく文面にしておく。
     shorts_template = env_template(
         "SHORTS_MESSAGE_TEMPLATE",
-        "＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝\n⚡️ 新しいショートが公開されました！‼️\n＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝\n{url}",
+        "＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝\n⚡️ 新しいショートが公開されました‼️\n＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝\n{url}",
     )
     shorts_webhook = env("SHORTS_WEBHOOK_URL")
     try:
